@@ -139,8 +139,12 @@ else
 fi
 
 # move the R binaries to /app/vendor/R
-ls $VENDOR_DIR/R
+ls $VENDOR_DIR
 mv $VENDOR_DIR/R /app/vendor
+echo "Looking at contents of dir /app/vendor"
+ls /app/vendor
+echo "Looking at contents of dir /app/vendor/R"
+ls /app/vendor/R
 
 # trialed and errored on this; copy over libs to gfortran, so
 # that liblto_plugin.so and others can be found
@@ -207,10 +211,6 @@ fi
 
 # install dependencies from CRAN
 echo "Executing init.r script" | indent
-
-ls /app/vendor
-ls /app/vendor/R
-ls /app/vendor/R/bin
 
 # set the CRAN mirror and run the init.r program
 # NOTE: output can't be indented unfortunately
