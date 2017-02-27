@@ -60,7 +60,7 @@ fi
 if [[ -f "$BUILD_DIR/.r-version" ]];
 then
   R_VERSION=`read_var $BUILD_DIR/.r-version`
-  echo "NOTE: Using R version override [$R_VERSION]" | indent
+  echo "NOTE: Using R version override [$R_VERSION]"
 else
   R_VERSION="3.3.1"
 fi
@@ -69,7 +69,7 @@ fi
 if [[ -f "$BUILD_DIR/.r-buildpack-version" ]];
 then
   BUILD_PACK_VERSION=`read_var $BUILD_DIR/.r-buildpack-version`
-  echo "NOTE: Using buildback version override [$BUILD_PACK_VERSION]" | indent
+  echo "NOTE: Using buildback version override [$BUILD_PACK_VERSION]"
 else
   BUILD_PACK_VERSION="20160720-0331"
 fi
@@ -78,7 +78,7 @@ S3_BUCKET="heroku-buildpack-r"
 R_BINARIES="http://${S3_BUCKET}.s3.amazonaws.com/${STACK}/R-${R_VERSION}-binaries-${BUILD_PACK_VERSION}.tar.gz"
 
 # vendor R into the slug
-echo "Vendoring R $R_VERSION for $STACK stack ($BUILD_PACK_VERSION)" | indent
+echo "Vendoring R $R_VERSION for $STACK stack ($BUILD_PACK_VERSION)" 
 
 # Check if we can pull from cache rather than downloading
 if [[ -f "$CACHE_DIR/.r-version" ]] &&
@@ -88,7 +88,7 @@ if [[ -f "$CACHE_DIR/.r-version" ]] &&
 then
 
   # copy from cache to the build directory
-  echo "Retrieving R binaries and packages from cache" | indent
+  echo "Retrieving R binaries and packages from cache"
   cp -r $CACHE_DIR/vendor $BUILD_DIR
 
 else
@@ -116,14 +116,14 @@ fi
 if [ -d $BUILD_DIR/.apt ]; then
 
   # move the app authors binaries
-  echo "Copying existing .apt files" | indent
+  echo "Copying existing .apt files" 
   cp -r $BUILD_DIR/.apt /app
 
   # the buildpack binaries will be merged with these
   # so there may be issues if different versions
   # are included over those from the R buildpack
 
-  echo "Merging buildpack .apt files" | indent
+  echo "Merging buildpack .apt files" 
   cp -r $VENDOR_DIR/.apt/* /app/.apt
 
   rm -rf $BUILD_DIR/.apt
@@ -208,7 +208,7 @@ echo "Executing init.r script" | indent
 
 # set the CRAN mirror and run the init.r program
 # NOTE: output can't be indented unfortunately
-/app/vendor/R/bin/R --no-save -s <<RPROG 2>&1 | indent
+/app/vendor/R/bin/R --no-save -s <<RPROG 2>&1 
   cat("\n=====> init.r Starting...\n")
   Sys.setenv(BUILD_DIR="$BUILD_DIR")
   setwd("$BUILD_DIR")
@@ -221,7 +221,7 @@ RPROG
 
 # TODO: determine whether the R script failed
 echo
-echo "R $R_VERSION successfully installed" | indent
+echo "R $R_VERSION successfully installed" 
 
 # hook for after compilation
 if [[ -f "$BUILD_DIR/after_compile" ]]; then
