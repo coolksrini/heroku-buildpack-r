@@ -19,3 +19,9 @@ export R_INCLUDE="$HOME/vendor/R/lib64/R/include"
 export TCL_LIBRARY="$HOME/.apt/usr/share/tcltk/tcl8.5"
 export TK_LIBRARY="$HOME/.apt/usr/share/tcltk/tk8.5"
 export CRAN_MIRROR="http://cran.revolutionanalytics.com"
+
+
+
+which gcc
+which gfortran
+ls $HOME/.apt/usr/bin
