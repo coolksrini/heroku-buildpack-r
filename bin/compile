@@ -207,6 +207,10 @@ fi
 # install dependencies from CRAN
 echo "Executing init.r script" | indent
 
+ls /app/vendor
+ls /app/vendor/R
+ls /app/vendor/R/bin
+
 # set the CRAN mirror and run the init.r program
 # NOTE: output can't be indented unfortunately
 /app/vendor/R/bin/R --no-save -s <<RPROG 2>&1 
