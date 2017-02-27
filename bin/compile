@@ -139,6 +139,8 @@ else
 fi
 
 # move the R binaries to /app/vendor/R
+mkdir -p /app/vendor
+echo "Looking at contents of dir $VENDOR_DIR"
 ls $VENDOR_DIR
 mv $VENDOR_DIR/R /app/vendor
 echo "Looking at contents of dir /app/vendor"
