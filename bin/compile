@@ -30,11 +30,13 @@ function read_var() {
 unset GIT_DIR
 
 # parse and derive params
+APP_HOME=/app
 BUILD_DIR=$1
 CACHE_DIR=$2
 LP_DIR=`cd $(dirname $0); cd ..; pwd`
 
 # ensure exist
+mkdir -p $APP_HOME
 mkdir -p $BUILD_DIR
 mkdir -p $CACHE_DIR
 
@@ -118,14 +120,14 @@ if [ -d $BUILD_DIR/.apt ]; then
 
   # move the app authors binaries
   echo "Copying existing .apt files" 
-  cp -r $BUILD_DIR/.apt $HOME
+  cp -r $BUILD_DIR/.apt $APP_HOME
 
   # the buildpack binaries will be merged with these
   # so there may be issues if different versions
   # are included over those from the R buildpack
 
   echo "Merging buildpack .apt files" 
-  cp -r $VENDOR_DIR/.apt/* $HOME/.apt
+  cp -r $VENDOR_DIR/.apt/* $APP_HOME/.apt
 
   rm -rf $BUILD_DIR/.apt
   rm -rf $VENDOR_DIR/.apt
@@ -134,41 +136,40 @@ else
 
   # move the binary dependances to $HOME/.apt
   # so that R can find them when compiling packages
-  mv $VENDOR_DIR/.apt $HOME
+  mv $VENDOR_DIR/.apt $APP_HOME
 
 fi
 
 # move the R binaries to /app/vendor/R
-ln -s $HOME /app
-mkdir -p $HOME/vendor
-mv $VENDOR_DIR/R $HOME/vendor
+mkdir -p $APP_HOME/vendor
+mv $VENDOR_DIR/R $APP_HOME/vendor
 
 # trialed and errored on this; copy over libs to gfortran, so
 # that liblto_plugin.so and others can be found
 # (tried using LDFLAGS, LD_LIBRARY_PATH and LIBRARY_PATH but didn't work)
-cp -r /usr/lib/gcc/$ARCH/$GCC_VERSION/* $HOME/.apt/usr/lib/gcc/$ARCH/$GCC_VERSION
+cp -r /usr/lib/gcc/$ARCH/$GCC_VERSION/* $APP_HOME/.apt/usr/lib/gcc/$ARCH/$GCC_VERSION
 
 # fix up package config files ~ point them to $HOME/.apt/usr/... instead of /usr/...
-for pcfile in $HOME/.apt/usr/lib/pkgconfig/*.pc
+for pcfile in $APP_HOME/.apt/usr/lib/pkgconfig/*.pc
 do
-  sed -i "s#/usr#$HOME/.apt/usr#g" $pcfile
+  sed -i "s#/usr#$APP_HOME/.apt/usr#g" $pcfile
 done
 
-for pcfile in $HOME/.apt/usr/lib/$ARCH/pkgconfig/*.pc
+for pcfile in $APP_HOME/.apt/usr/lib/$ARCH/pkgconfig/*.pc
 do
-  sed -i "s#/usr#$HOME/.apt/usr#g" $pcfile
+  sed -i "s#/usr#$APP_HOME/.apt/usr#g" $pcfile
 done
 
-for pcfile in $HOME/.apt/usr/share/pkgconfig/*.pc
+for pcfile in $APP_HOME/.apt/usr/share/pkgconfig/*.pc
 do
-  sed -i "s#/usr#$HOME/.apt/usr#g" $pcfile
+  sed -i "s#/usr#$APP_HOME/.apt/usr#g" $pcfile
 done
 
 # prevent warnings when building packages
 # since these directories/files aren't included
 # in the buildpack to make it smaller
-mkdir -p $HOME/vendor/R/lib64/R/doc/html
-touch $HOME/vendor/R/lib64/R/doc/html/R.css
+mkdir -p $APP_HOME/vendor/R/lib64/R/doc/html
+touch $APP_HOME/vendor/R/lib64/R/doc/html/R.css
 
 #
 # expected layout
@@ -189,8 +190,8 @@ source "$LP_DIR/bin/r_environment.sh"
 # Makevars?
 if [[ -f "$BUILD_DIR/Makevars" ]]; then
   echo "Setting Makevars" | indent
-  mkdir -p $HOME/.R
-  cp $BUILD_DIR/Makevars $HOME/.R/Makevars
+  mkdir -p $APP_HOME/.R
+  cp $BUILD_DIR/Makevars $APP_HOME/.R/Makevars
 fi
 
 # hook for before compilation
@@ -211,7 +212,7 @@ echo "Executing init.r script" | indent
 
 # set the CRAN mirror and run the init.r program
 # NOTE: output can't be indented unfortunately
-$HOME/vendor/R/bin/R --no-save -s <<RPROG 2>&1 
+$APP_HOME/vendor/R/bin/R --no-save -s <<RPROG 2>&1 
   cat("\n=====> init.r Starting...\n")
   Sys.setenv(BUILD_DIR="$BUILD_DIR")
   setwd("$BUILD_DIR")
@@ -242,8 +243,8 @@ cp "$LP_DIR/bin/r_environment.sh" "$BUILD_DIR/.profile.d/r_environment.sh"
 
 # now copy everything back to the BUILD_DIR
 # which will be used to make the slug
-cp -r $HOME/.apt $BUILD_DIR
-cp -r $HOME/vendor/R $VENDOR_DIR
+cp -r $APP_HOME/.apt $BUILD_DIR
+cp -r $APP_HOME/vendor/R $VENDOR_DIR
 
 #
 # layout of $BUILD_DIR now
@@ -258,8 +259,8 @@ cp -r $HOME/vendor/R $VENDOR_DIR
 echo "$R_VERSION" > "$CACHE_DIR/.r-version"
 echo "$BUILD_PACK_VERSION" > "$CACHE_DIR/.r-buildpack-version"
 mkdir -p $CACHE_DIR/vendor
-cp -r $HOME/.apt $CACHE_DIR/vendor
-cp -r $HOME/vendor/R $CACHE_DIR/vendor
+cp -r $APP_HOME/.apt $CACHE_DIR/vendor
+cp -r $APP_HOME/vendor/R $CACHE_DIR/vendor
 
 # give environment to later buildpacks
 export | grep -E -e ' (PATH|LIBRARY_PATH|LD_LIBRARY_PATH|LDFLAGS|PKG_LIBS|PKG_CPPFLAGS|PKG_CONFIG_PATH|INCLUDE_PATH|CPATH|CPPPATH|R_INCLUDE)=' >> "$LP_DIR/export"
