@@ -139,6 +139,7 @@ else
 fi
 
 # move the R binaries to /app/vendor/R
+ls $VENDOR_DIR/R
 mv $VENDOR_DIR/R /app/vendor
 
 # trialed and errored on this; copy over libs to gfortran, so
