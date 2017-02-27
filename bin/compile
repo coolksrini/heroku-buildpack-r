@@ -140,13 +140,7 @@ fi
 
 # move the R binaries to /app/vendor/R
 mkdir -p /app/vendor
-echo "Looking at contents of dir $VENDOR_DIR"
-ls $VENDOR_DIR
 mv $VENDOR_DIR/R /app/vendor
-echo "Looking at contents of dir /app/vendor"
-ls /app/vendor
-echo "Looking at contents of dir /app/vendor/R"
-ls /app/vendor/R
 
 # trialed and errored on this; copy over libs to gfortran, so
 # that liblto_plugin.so and others can be found
