@@ -139,6 +139,7 @@ else
 fi
 
 # move the R binaries to /app/vendor/R
+ln -s $HOME /app
 mkdir -p $HOME/vendor
 mv $VENDOR_DIR/R $HOME/vendor
 
