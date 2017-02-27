@@ -94,8 +94,8 @@ then
 else
 
   # download and unpack binaries
-  echo "Downloading and unpacking R binaries : $R_BINARIES" | indent
-  cmd = "curl $R_BINARIES -s -o - | tar xzf - -C $BUILD_DIR"
+  echo "Downloading and unpacking R binaries : $R_BINARIES" 
+  cmd="curl $R_BINARIES -s -o - | tar xzf - -C $BUILD_DIR"
   echo "Running cmd: $cmd"
   curl $R_BINARIES -s -o - | tar xzf - -C $BUILD_DIR
 
